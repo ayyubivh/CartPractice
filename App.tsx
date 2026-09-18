@@ -1,45 +1,37 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * CartPractice
+ * A small e-commerce app built with local Context state, meant as a
+ * starting point for practicing a migration to Redux.
  *
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider } from './src/context/AuthContext';
+import { CartProvider } from './src/context/CartContext';
+import { FavoritesProvider } from './src/context/FavoritesContext';
+import AppNavigator from './src/navigation/AppNavigator';
 
+// ----------------------------------------------------------------------------
+// This is the single spot that will change the most when you add Redux:
+// these three Providers + their useState-backed contexts get replaced by
+// one `<Provider store={store}>` wrapping the app, with AuthProvider,
+// CartProvider, and FavoritesProvider each becoming a slice (see the
+// "REDUX MIGRATION CANDIDATE" comments in src/context/*.tsx).
+// ----------------------------------------------------------------------------
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <AuthProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <AppNavigator />
+          </FavoritesProvider>
+        </CartProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
