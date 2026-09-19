@@ -8,10 +8,9 @@
 
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AuthProvider } from './src/context/AuthContext';
-import { CartProvider } from './src/context/CartContext';
-import { FavoritesProvider } from './src/context/FavoritesContext';
+import { store } from './src/store/store';
 import AppNavigator from './src/navigation/AppNavigator';
+import { Provider } from 'react-redux';
 
 // ----------------------------------------------------------------------------
 // This is the single spot that will change the most when you add Redux:
@@ -22,15 +21,11 @@ import AppNavigator from './src/navigation/AppNavigator';
 // ----------------------------------------------------------------------------
 function App() {
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <CartProvider>
-          <FavoritesProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
             <AppNavigator />
-          </FavoritesProvider>
-        </CartProvider>
-      </AuthProvider>
     </SafeAreaProvider>
+    </Provider>
   );
 }
 

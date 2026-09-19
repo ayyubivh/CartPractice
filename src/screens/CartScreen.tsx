@@ -4,7 +4,7 @@ import PrimaryButton from '../components/PrimaryButton';
 import CartListItem from '../components/CartListItem';
 import EmptyState from '../components/EmptyState';
 import { getProductById } from '../data/products';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../features/cart/cartSlice';
 
 export default function CartScreen() {
   const { items, cartTotal, clearCart } = useCart();
