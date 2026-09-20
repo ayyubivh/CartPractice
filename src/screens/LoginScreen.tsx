@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
-import { useAuth } from '../context/AuthContext';
+import { useAppDispatch } from '../store/hooks';
+import { login } from '../features/auth/authSlice'
 
-// No real backend — this is a mock sign-in that just stores a name/email
-// pair in AuthContext. See context/AuthContext.tsx for the state itself.
+
 export default function LoginScreen() {
-  const { login } = useAuth();
+  
+  const dispatch = useAppDispatch();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
@@ -41,7 +42,7 @@ export default function LoginScreen() {
 
         <PrimaryButton
           title="Log In"
-          onPress={() => login(name.trim(), email.trim())}
+          onPress={() => dispatch(login({name: name.trim(), email: email.trim()}))}
           disabled={!canSubmit}
           style={styles.button}
         />

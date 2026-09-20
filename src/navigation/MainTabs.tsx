@@ -6,8 +6,9 @@ import WishlistScreen from '../screens/WishlistScreen';
 import CartScreen from '../screens/CartScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { MainTabParamList } from '../types';
-import { useCart } from '../context/CartContext';
-import { useFavorites } from '../context/FavoritesContext';
+import { useAppSelector } from '../store/hooks';
+import { selectCartCount } from '../features/cart/cartSlice';
+
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -24,8 +25,8 @@ const CartIcon = () => <Text>{ICONS.Cart}</Text>;
 const ProfileIcon = () => <Text>{ICONS.Profile}</Text>;
 
 export default function MainTabs() {
-  const { cartCount } = useCart();
-  const { favoriteIds } = useFavorites();
+  const cartCount = useAppSelector(selectCartCount);
+  const { favoriteIds } = useAppSelector(state => state.favorites);
 
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>

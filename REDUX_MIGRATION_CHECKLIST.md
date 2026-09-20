@@ -78,30 +78,48 @@ first, the one with derived selectors last).
       Done — registers `auth`, `cart`, `favorites`, exports
       `RootState` and `AppDispatch`.
 
-- [ ] **Step 5b — `hooks.ts`**
-      Still empty (0 bytes). Needs `useAppDispatch`/`useAppSelector`.
+- [x] **Step 5b — `hooks.ts`**
+      Done — typed `useAppDispatch`/`useAppSelector`, matches
+      `AppDispatch`/`RootState` from `store.ts` correctly.
 
 - [x] **Step 5c — `App.tsx` Provider**
       Done — `<Provider store={store}>` correctly wraps the app.
 
-- [ ] **Step 6 — Migrate every consumer**
-      `CartScreen.tsx` was touched but is broken — it imports a
-      `useCart` hook from `cartSlice.ts` that doesn't exist there
-      (that's the old Context pattern, not how RTK selectors work; see
-      Step 4). The other 9 files still import from the deleted
-      `src/context/*`.
+- [x] **Step 6 — Migrate every consumer** (10 of 10 done)
+      - [x] `LoginScreen.tsx` — dispatches `login({ name, email })`
+      - [x] `HomeScreen.tsx` — reads `selectCartCount`
+      - [x] `CartScreen.tsx` — `selectCartItems`/`selectCartTotal` +
+            `dispatch(clearCart())`
+      - [x] `AppNavigator.tsx` — reads `state.auth.user`
+      - [x] `MainTabs.tsx` — reads `selectCartCount`/`state.favorites`
+            for tab badges (fixed: was wrongly using `selectCartTotal`
+            for the cart badge — now correctly `selectCartCount`)
+      - [x] `CartListItem.tsx` — dispatches `updateQuantity`/`removeFromCart`
+      - [x] `ProductCard.tsx` — dispatches `toggledFavorites`/`addToCart`,
+            `favorite` selector uses `.includes()` (fixed a `.map()` bug
+            that made the heart icon always show filled)
+      - [x] `ProductDetailScreen.tsx` — dispatches `addToCart`/`toggledFavorites`;
+            fixed a `react-hooks/rules-of-hooks` violation (`useAppSelector`
+            was called after a conditional early return)
+      - [x] `ProfileScreen.tsx` — reads `state.auth.user`, `selectCartCount`,
+            `selectCartTotal`, `state.favorites.favoriteIds`;
+            `dispatch(logout())`
+      - [x] `WishlistScreen.tsx` — reads `state.favorites.favoriteIds`
+            (the 2 pre-existing implicit-`any` params resolved on their
+            own once `favoriteIds` had a real type from `RootState`)
 
-- [ ] **Step 7 — Delete the old Context layer** ⚠️ done out of order
+- [x] **Step 7 — Delete the old Context layer**
       `src/context/{AuthContext,CartContext,FavoritesContext}.tsx` are
-      already deleted in the working tree — but this happened *before*
-      Step 6, not after. That's why `npx tsc --noEmit` currently fails
-      with ~17 errors. They're still recoverable with
-      `git checkout -- src/context` if needed; otherwise push forward
-      through Steps 4–6 to make the deletion valid.
+      deleted, and now validly so — no file references them, confirmed
+      by `npx tsc --noEmit` (0 errors) and `npx eslint src App.tsx`
+      (0 errors). Also cleaned up a stale comment in `App.tsx` that
+      still described the old Context setup.
 
 - [ ] **Step 8 — Re-verify the app manually**
-      Re-run the login → home → cart → wishlist → profile walkthrough
-      and confirm behavior matches pre-migration.
+      `tsc` and `eslint` are clean, but that only proves the code is
+      well-typed — not that it behaves correctly at runtime. Still need
+      to actually run the app: login → home → cart → wishlist → profile
+      → log out, and confirm behavior matches pre-migration.
 
 ---
 

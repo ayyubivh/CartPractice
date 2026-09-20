@@ -2,7 +2,8 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
 import QuantityStepper from './QuantityStepper';
-import { useCart } from '../context/CartContext';
+import { useAppDispatch } from '../store/hooks';
+import { updateQuantity, removeFromCart } from '../features/cart/cartSlice';
 
 interface Props {
   product: Product;
@@ -10,7 +11,8 @@ interface Props {
 }
 
 export default function CartListItem({ product, quantity }: Props) {
-  const { updateQuantity, removeFromCart } = useCart();
+  // const { updateQuantity, removeFromCart } = useCart();
+  const dispatch = useAppDispatch()
 
   return (
     <View style={styles.row}>
@@ -23,8 +25,8 @@ export default function CartListItem({ product, quantity }: Props) {
       </View>
       <QuantityStepper
         quantity={quantity}
-        onIncrease={() => updateQuantity(product.id, quantity + 1)}
-        onDecrease={() => updateQuantity(product.id, quantity - 1)}
+        onIncrease={() => dispatch(updateQuantity({productId: product.id, quantity: quantity + 1}))}
+        onDecrease={() => dispatch(updateQuantity({productId: product.id, quantity: quantity - 1}))}
       />
       <Pressable hitSlop={8} onPress={() => removeFromCart(product.id)} style={styles.remove}>
         <Text style={styles.removeText}>✕</Text>

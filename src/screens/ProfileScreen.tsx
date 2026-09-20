@@ -1,18 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
-import { useFavorites } from '../context/FavoritesContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { logout } from '../features/auth/authSlice';
+import { selectCartCount, selectCartTotal } from '../features/cart/cartSlice';
 
-// Pulls from all three contexts at once — a good "is this screen worth the
-// prop-drilling pain" example: without Context/Redux, getting user, cart,
-// and favorites data here would mean threading all three down through the
-// tab + stack navigators.
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
-  const { cartCount, cartTotal } = useCart();
-  const { favoriteIds } = useFavorites();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.auth.user);
+  const cartCount = useAppSelector(selectCartCount);
+  const cartTotal = useAppSelector(selectCartTotal);
+  const favoriteIds = useAppSelector(state => state.favorites.favoriteIds);
 
   return (
     <View style={styles.container}>
@@ -39,7 +37,7 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <PrimaryButton title="Log Out" onPress={logout} variant="danger" style={styles.logout} />
+      <PrimaryButton title="Log Out" onPress={() => dispatch(logout())} variant="danger" style={styles.logout} />
     </View>
   );
 }

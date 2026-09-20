@@ -5,7 +5,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ProductCard from '../components/ProductCard';
 import { PRODUCTS } from '../data/products';
 import { RootStackParamList } from '../types';
-import { useCart } from '../context/CartContext';
+import { useAppSelector } from '../store/hooks';
+import { selectCartCount } from '../features/cart/cartSlice';
 
 // This screen only READS product data (static, no context needed) but each
 // ProductCard reaches into CartContext/FavoritesContext directly. The
@@ -13,7 +14,7 @@ import { useCart } from '../context/CartContext';
 // example of the same state being needed in two places on one screen.
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { cartCount } = useCart();
+  const cartCount = useAppSelector(selectCartCount)
 
   return (
     <View style={styles.container}>

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
-import { useCart } from '../context/CartContext';
-import { useFavorites } from '../context/FavoritesContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { toggledFavorites } from '../features/favorites/favoritesSlice';
+import { addToCart } from '../features/cart/cartSlice';
+
 
 interface Props {
   product: Product;
@@ -14,9 +16,10 @@ interface Props {
 // callbacks as props — with Redux this becomes useSelector/useDispatch
 // calls in exactly the same spot.
 export default function ProductCard({ product, onPress }: Props) {
-  const { addToCart } = useCart();
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const favorite = isFavorite(product.id);
+
+
+  const dispatch = useAppDispatch();
+  const favorite = useAppSelector(state => state.favorites.favoriteIds.includes(product.id))
 
   return (
     <Pressable style={styles.card} onPress={onPress}>
@@ -33,11 +36,13 @@ export default function ProductCard({ product, onPress }: Props) {
       <View style={styles.actions}>
         <Pressable
           hitSlop={8}
-          onPress={() => toggleFavorite(product.id)}
+          onPress={() => dispatch(toggledFavorites(product.id))}
           style={styles.favoriteButton}>
           <Text style={styles.favoriteIcon}>{favorite ? '❤️' : '🤍'}</Text>
         </Pressable>
-        <Pressable hitSlop={8} onPress={() => addToCart(product.id)} style={styles.addButton}>
+        <Pressable hitSlop={8} onPress={() => dispatch(addToCart({
+          productId: product.id
+        }))} style={styles.addButton}>
           <Text style={styles.addButtonText}>Add</Text>
         </Pressable>
       </View>

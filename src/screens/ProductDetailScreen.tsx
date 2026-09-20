@@ -5,20 +5,21 @@ import PrimaryButton from '../components/PrimaryButton';
 import QuantityStepper from '../components/QuantityStepper';
 import { getProductById } from '../data/products';
 import { RootStackParamList } from '../types';
-import { useCart } from '../context/CartContext';
-import { useFavorites } from '../context/FavoritesContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addToCart } from '../features/cart/cartSlice';
+import { toggledFavorites } from '../features/favorites/favoritesSlice';
 
 export default function ProductDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'ProductDetail'>>();
   const product = getProductById(route.params.productId);
 
-  // Local-only state: this quantity selector is UI state for "how many to
-  // add next", not shared app state, so it correctly stays as useState even
-  // after everything else migrates to Redux.
   const [quantity, setQuantity] = useState(1);
 
-  const { addToCart } = useCart();
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const dispatch = useAppDispatch();
+
+  const favorite = useAppSelector(state =>
+    product ? state.favorites.favoriteIds.includes(product.id) : false
+  );
 
   if (!product) {
     return (
@@ -27,8 +28,6 @@ export default function ProductDetailScreen() {
       </View>
     );
   }
-
-  const favorite = isFavorite(product.id);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -52,12 +51,12 @@ export default function ProductDetailScreen() {
 
       <PrimaryButton
         title={`Add to Cart · $${(product.price * quantity).toFixed(2)}`}
-        onPress={() => addToCart(product.id, quantity)}
+        onPress={() => dispatch(addToCart({productId: product.id, quantity: quantity}))}
         style={styles.addButton}
       />
       <PrimaryButton
         title={favorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
-        onPress={() => toggleFavorite(product.id)}
+        onPress={() => dispatch(toggledFavorites(product.id))}
         variant="secondary"
       />
     </ScrollView>

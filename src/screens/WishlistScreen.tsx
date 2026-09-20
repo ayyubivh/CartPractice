@@ -6,11 +6,11 @@ import ProductCard from '../components/ProductCard';
 import EmptyState from '../components/EmptyState';
 import { getProductById } from '../data/products';
 import { RootStackParamList } from '../types';
-import { useFavorites } from '../context/FavoritesContext';
+import { useAppSelector } from '../store/hooks';
 
 export default function WishlistScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { favoriteIds } = useFavorites();
+  const favoriteIds = useAppSelector(state => state.favorites.favoriteIds);
 
   const products = favoriteIds
     .map(id => getProductById(id))

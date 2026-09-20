@@ -4,15 +4,18 @@ import PrimaryButton from '../components/PrimaryButton';
 import CartListItem from '../components/CartListItem';
 import EmptyState from '../components/EmptyState';
 import { getProductById } from '../data/products';
-import { useCart } from '../features/cart/cartSlice';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { selectCartItems, selectCartTotal, clearCart } from '../features/cart/cartSlice';
 
 export default function CartScreen() {
-  const { items, cartTotal, clearCart } = useCart();
+   const items = useAppSelector(selectCartItems);
+   const cartTotal = useAppSelector(selectCartTotal);
+   const dispatch = useAppDispatch();
 
   const confirmCheckout = () => {
     Alert.alert('Checkout', `Order total: $${cartTotal.toFixed(2)}`, [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Place Order', onPress: clearCart },
+      { text: 'Place Order', onPress: () => dispatch(clearCart()) },
     ]);
   };
 
