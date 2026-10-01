@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
 import QuantityStepper from './QuantityStepper';
 import { useAppDispatch } from '../store/hooks';
@@ -16,7 +16,7 @@ export default function CartListItem({ product, quantity }: Props) {
 
   return (
     <View style={styles.row}>
-      <Text style={styles.icon}>{product.icon}</Text>
+      <Image source={{ uri: product.image }} style={styles.image} resizeMode="cover" />
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
           {product.name}
@@ -28,7 +28,7 @@ export default function CartListItem({ product, quantity }: Props) {
         onIncrease={() => dispatch(updateQuantity({productId: product.id, quantity: quantity + 1}))}
         onDecrease={() => dispatch(updateQuantity({productId: product.id, quantity: quantity - 1}))}
       />
-      <Pressable hitSlop={8} onPress={() => removeFromCart(product.id)} style={styles.remove}>
+      <Pressable hitSlop={8} onPress={() => dispatch(removeFromCart(product.id))} style={styles.remove}>
         <Text style={styles.removeText}>✕</Text>
       </Pressable>
     </View>
@@ -46,8 +46,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#eef0f3',
   },
-  icon: {
-    fontSize: 28,
+  image: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
     marginRight: 12,
   },
   info: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { toggledFavorites } from '../features/favorites/favoritesSlice';
@@ -24,7 +24,7 @@ export default function ProductCard({ product, onPress }: Props) {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.iconWrap}>
-        <Text style={styles.icon}>{product.icon}</Text>
+        <Image source={{ uri: product.image }} style={styles.image} resizeMode="cover" />
       </View>
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
@@ -69,9 +69,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    overflow: 'hidden',
   },
-  icon: {
-    fontSize: 26,
+  image: {
+    width: '100%',
+    height: '100%',
   },
   info: {
     flex: 1,

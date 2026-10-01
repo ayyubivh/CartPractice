@@ -4,16 +4,17 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ProductCard from '../components/ProductCard';
 import EmptyState from '../components/EmptyState';
-import { getProductById } from '../data/products';
 import { RootStackParamList } from '../types';
 import { useAppSelector } from '../store/hooks';
+import { selectProducts } from '../features/products/productsSlice';
 
 export default function WishlistScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const favoriteIds = useAppSelector(state => state.favorites.favoriteIds);
+  const allProducts = useAppSelector(selectProducts);
 
   const products = favoriteIds
-    .map(id => getProductById(id))
+    .map(id => allProducts.find(p => p.id === id))
     .filter((p): p is NonNullable<typeof p> => p !== undefined);
 
   return (
@@ -24,7 +25,7 @@ export default function WishlistScreen() {
       ) : (
         <FlatList
           data={products}
-          keyExtractor={item => item.id}
+          keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <ProductCard

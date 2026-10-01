@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FavoriteState {
-    favoriteIds: string[]
+    favoriteIds: number[]
 }
 
 const initialState: FavoriteState = {
@@ -12,7 +12,7 @@ const favoriteSlice = createSlice({
     name: 'favorites',
     initialState,
     reducers:{
-        toggledFavorites: (state, action: PayloadAction<string>) =>{
+        toggledFavorites: (state, action: PayloadAction<number>) =>{
             const productId = action.payload;
             const index = state.favoriteIds.indexOf(productId);
 

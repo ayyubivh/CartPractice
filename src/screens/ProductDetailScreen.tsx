@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import PrimaryButton from '../components/PrimaryButton';
 import QuantityStepper from '../components/QuantityStepper';
-import { getProductById } from '../data/products';
 import { RootStackParamList } from '../types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addToCart } from '../features/cart/cartSlice';
 import { toggledFavorites } from '../features/favorites/favoritesSlice';
+import { selectProductById } from '../features/products/productsSlice';
 
 export default function ProductDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'ProductDetail'>>();
-  const product = getProductById(route.params.productId);
+  const product = useAppSelector(selectProductById(route.params.productId));
 
   const [quantity, setQuantity] = useState(1);
 
@@ -32,7 +32,7 @@ export default function ProductDetailScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.iconWrap}>
-        <Text style={styles.icon}>{product.icon}</Text>
+        <Image source={{ uri: product.image }} style={styles.image} resizeMode="cover" />
       </View>
 
       <Text style={styles.category}>{product.category}</Text>
@@ -83,9 +83,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
+    overflow: 'hidden',
   },
-  icon: {
-    fontSize: 72,
+  image: {
+    width: '100%',
+    height: '100%',
   },
   category: {
     fontSize: 13,

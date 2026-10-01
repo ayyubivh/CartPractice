@@ -1,20 +1,31 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ProductCard from '../components/ProductCard';
-import { PRODUCTS } from '../data/products';
 import { RootStackParamList } from '../types';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectCartCount } from '../features/cart/cartSlice';
+import {
+  fetchProducts,
+  selectProducts,
+  selectProductsError,
+  selectProductsStatus,
+} from '../features/products/productsSlice';
 
-// This screen only READS product data (static, no context needed) but each
-// ProductCard reaches into CartContext/FavoritesContext directly. The
-// badge below is a second, independent read of CartContext — a good
-// example of the same state being needed in two places on one screen.
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const cartCount = useAppSelector(selectCartCount)
+  const dispatch = useAppDispatch();
+  const cartCount = useAppSelector(selectCartCount);
+  const products = useAppSelector(selectProducts);
+  const status = useAppSelector(selectProductsStatus);
+  const error = useAppSelector(selectProductsError);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [status, dispatch]);
 
   return (
     <View style={styles.container}>
@@ -26,17 +37,35 @@ export default function HomeScreen() {
           </View>
         )}
       </View>
-      <FlatList
-        data={PRODUCTS}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <ProductCard
-            product={item}
-            onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
-          />
-        )}
-      />
+
+      {status === 'loading' && (
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color="#2f6feb" />
+        </View>
+      )}
+
+      {status === 'failed' && (
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.retry} onPress={() => dispatch(fetchProducts())}>
+            Tap to retry
+          </Text>
+        </View>
+      )}
+
+      {status === 'succeeded' && (
+        <FlatList
+          data={products}
+          keyExtractor={item => String(item.id)}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }) => (
+            <ProductCard
+              product={item}
+              onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
+            />
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -68,6 +97,21 @@ const styles = StyleSheet.create({
   badgeText: {
     color: '#2f6feb',
     fontSize: 12,
+    fontWeight: '600',
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  errorText: {
+    color: '#d64545',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  retry: {
+    color: '#2f6feb',
     fontWeight: '600',
   },
   list: {

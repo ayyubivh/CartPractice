@@ -3,13 +3,14 @@ import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import CartListItem from '../components/CartListItem';
 import EmptyState from '../components/EmptyState';
-import { getProductById } from '../data/products';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { selectCartItems, selectCartTotal, clearCart } from '../features/cart/cartSlice';
+import { selectProducts } from '../features/products/productsSlice';
 
 export default function CartScreen() {
    const items = useAppSelector(selectCartItems);
    const cartTotal = useAppSelector(selectCartTotal);
+   const products = useAppSelector(selectProducts);
    const dispatch = useAppDispatch();
 
   const confirmCheckout = () => {
@@ -33,10 +34,10 @@ export default function CartScreen() {
       <Text style={styles.title}>Cart</Text>
       <FlatList
         data={items}
-        keyExtractor={item => item.productId}
+        keyExtractor={item => String(item.productId)}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
-          const product = getProductById(item.productId);
+          const product = products.find(p => p.id === item.productId);
           if (!product) return null;
           return <CartListItem product={product} quantity={item.quantity} />;
         }}

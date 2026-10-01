@@ -1,14 +1,15 @@
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   price: number;
   category: string;
   description: string;
-  icon: string; // emoji used as a placeholder "image" so the app needs no network access
+  stock: number;
+  image: string;
 }
 
 export interface CartItem {
-  productId: string;
+  productId: number;
   quantity: number;
 }
 
@@ -21,7 +22,7 @@ export interface User {
 export type RootStackParamList = {
   Login: undefined;
   Main: undefined;
-  ProductDetail: { productId: string };
+  ProductDetail: { productId: number };
 };
 
 export type MainTabParamList = {
