@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Product } from '../../types';
-import { apiFetch } from '../../api/client';
-import { RootState } from '../../store/store';
+import type { Product } from '../../types';
+import { api } from '../../api/client';
+import type { RootState } from '../../store/store';
 
 export const fetchProducts = createAsyncThunk('products/fetchAll', () =>
-  apiFetch<{ products: Product[] }>('/api/products').then(res => res.products)
+  api
+    .get<{ products: Product[] }>('/api/products')
+    .then(res => res.data.products),
 );
 
 interface ProductsState {
