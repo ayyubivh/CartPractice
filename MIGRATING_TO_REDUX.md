@@ -1,4 +1,4 @@
-# Migrating CartPractice to Redux
+# Migrating E-Commerce to Redux
 
 This app currently keeps all shared state in three React Contexts
 (`AuthContext`, `CartContext`, `FavoritesContext`), each backed by

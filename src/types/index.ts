@@ -14,8 +14,14 @@ export interface CartItem {
 }
 
 export interface User {
+  id: number;
   name: string;
   email: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  token: string;
 }
 
 // Params for every screen reachable via navigation.navigate(...)

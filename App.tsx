@@ -1,5 +1,5 @@
 /**
- * CartPractice
+ * E-Commerce
  * A small e-commerce app built with local Context state, meant as a
  * starting point for practicing a migration to Redux.
  *

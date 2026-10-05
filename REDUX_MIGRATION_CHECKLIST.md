@@ -1,4 +1,4 @@
-# Redux Migration Checklist — CartPractice
+# Redux Migration Checklist — E-Commerce
 
 Tracker only — no code here. For implementation code/snippets, see
 [MIGRATING_TO_REDUX.md](MIGRATING_TO_REDUX.md).

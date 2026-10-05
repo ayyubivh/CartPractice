@@ -27,7 +27,10 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     if (__DEV__) {
       console.warn(`[API] ✖ ${method} ${url} ${res.status} (${Date.now() - startedAt}ms)`, body);
     }
-    throw new Error(body.error ?? `Request failed (${res.status})`);
+    const details = Array.isArray(body.details)
+      ? body.details.map((d: { message: string }) => d.message).join('\n')
+      : '';
+    throw new Error(details || body.error || `Request failed (${res.status})`);
   }
 
   const data = await res.json();
