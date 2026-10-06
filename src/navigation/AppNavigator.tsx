@@ -10,7 +10,10 @@ import { useAppSelector } from '../store/hooks';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
-  const { user } = useAppSelector(state => state.auth);
+  const { user, hydrated } = useAppSelector(state => state.auth);
+  if (!hydrated) {
+    return null;
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
