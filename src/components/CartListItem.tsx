@@ -2,8 +2,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
 import QuantityStepper from './QuantityStepper';
-import { useAppDispatch } from '../store/hooks';
-import { updateQuantity, removeFromCart } from '../features/cart/cartSlice';
+import { useCartStore } from '../features/cart/useCartStore';
 
 interface Props {
   product: Product;
@@ -11,8 +10,8 @@ interface Props {
 }
 
 export default function CartListItem({ product, quantity }: Props) {
-  // const { updateQuantity, removeFromCart } = useCart();
-  const dispatch = useAppDispatch()
+  const updateQuantity = useCartStore(state => state.updateQuantity);
+  const removeFromCart = useCartStore(state => state.removeFromCart);
 
   return (
     <View style={styles.row}>
@@ -25,10 +24,10 @@ export default function CartListItem({ product, quantity }: Props) {
       </View>
       <QuantityStepper
         quantity={quantity}
-        onIncrease={() => dispatch(updateQuantity({productId: product.id, quantity: quantity + 1}))}
-        onDecrease={() => dispatch(updateQuantity({productId: product.id, quantity: quantity - 1}))}
+        onIncrease={() => updateQuantity(product.id, quantity + 1)}
+        onDecrease={() => updateQuantity(product.id, quantity - 1)}
       />
-      <Pressable hitSlop={8} onPress={() => dispatch(removeFromCart(product.id))} style={styles.remove}>
+      <Pressable hitSlop={8} onPress={() => removeFromCart(product.id)} style={styles.remove}>
         <Text style={styles.removeText}>✕</Text>
       </Pressable>
     </View>

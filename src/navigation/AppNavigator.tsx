@@ -5,12 +5,13 @@ import LoginScreen from '../screens/LoginScreen';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import MainTabs from './MainTabs';
 import { RootStackParamList } from '../types';
-import { useAppSelector } from '../store/hooks';
+import { useAuthStore } from '../features/auth/useAuthStore';
  
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
-  const { user, hydrated } = useAppSelector(state => state.auth);
+  const user = useAuthStore(state => state.user);
+  const hydrated = useAuthStore(state => state.hydrated);
   if (!hydrated) {
     return null;
   }

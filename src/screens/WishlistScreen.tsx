@@ -5,13 +5,13 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ProductCard from '../components/ProductCard';
 import EmptyState from '../components/EmptyState';
 import { RootStackParamList } from '../types';
-import { useAppSelector } from '../store/hooks';
-import { selectProducts } from '../features/products/productsSlice';
+import { useFavoritesStore } from '../features/favorites/useFavoritesStore';
+import { useProductsStore } from '../features/products/useProductsStore';
 
 export default function WishlistScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const favoriteIds = useAppSelector(state => state.favorites.favoriteIds);
-  const allProducts = useAppSelector(selectProducts);
+  const favoriteIds = useFavoritesStore(state => state.favoriteIds);
+  const allProducts = useProductsStore(state => state.items);
 
   const products = favoriteIds
     .map(id => allProducts.find(p => p.id === id))

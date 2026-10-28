@@ -3,20 +3,19 @@ import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import CartListItem from '../components/CartListItem';
 import EmptyState from '../components/EmptyState';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { selectCartItems, selectCartTotal, clearCart } from '../features/cart/cartSlice';
-import { selectProducts } from '../features/products/productsSlice';
+import { useCartStore, useCartTotal } from '../features/cart/useCartStore';
+import { useProductsStore } from '../features/products/useProductsStore';
 
 export default function CartScreen() {
-   const items = useAppSelector(selectCartItems);
-   const cartTotal = useAppSelector(selectCartTotal);
-   const products = useAppSelector(selectProducts);
-   const dispatch = useAppDispatch();
+   const items = useCartStore(state => state.items);
+   const clearCart = useCartStore(state => state.clearCart);
+   const cartTotal = useCartTotal();
+   const products = useProductsStore(state => state.items);
 
   const confirmCheckout = () => {
     Alert.alert('Checkout', `Order total: $${cartTotal.toFixed(2)}`, [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Place Order', onPress: () => dispatch(clearCart()) },
+      { text: 'Place Order', onPress: () => clearCart() },
     ]);
   };
 

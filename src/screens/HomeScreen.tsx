@@ -4,28 +4,22 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ProductCard from '../components/ProductCard';
 import { RootStackParamList } from '../types';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectCartCount } from '../features/cart/cartSlice';
-import {
-  fetchProducts,
-  selectProducts,
-  selectProductsError,
-  selectProductsStatus,
-} from '../features/products/productsSlice';
+import { useCartStore, selectCartCount } from '../features/cart/useCartStore';
+import { useProductsStore } from '../features/products/useProductsStore';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const dispatch = useAppDispatch();
-  const cartCount = useAppSelector(selectCartCount);
-  const products = useAppSelector(selectProducts);
-  const status = useAppSelector(selectProductsStatus);
-  const error = useAppSelector(selectProductsError);
+  const cartCount = useCartStore(selectCartCount);
+  const products = useProductsStore(state => state.items);
+  const status = useProductsStore(state => state.status);
+  const error = useProductsStore(state => state.error);
+  const fetchProducts = useProductsStore(state => state.fetchProducts);
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchProducts());
-    }
-  }, [status, dispatch]);
+  if (status === 'idle') {
+    fetchProducts();
+  }
+}, [status, fetchProducts]);
 
   return (
     <View style={styles.container}>
@@ -47,7 +41,7 @@ export default function HomeScreen() {
       {status === 'failed' && (
         <View style={styles.centered}>
           <Text style={styles.errorText}>{error}</Text>
-          <Text style={styles.retry} onPress={() => dispatch(fetchProducts())}>
+          <Text style={styles.retry} onPress={() => fetchProducts()}>
             Tap to retry
           </Text>
         </View>
@@ -55,8 +49,10 @@ export default function HomeScreen() {
 
       {status === 'succeeded' && (
         <FlatList
-          data={products}
-          keyExtractor={item => String(item.id)}
+          data={products}   
+          keyExtractor={
+            item => String(item.id)
+          }
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <ProductCard

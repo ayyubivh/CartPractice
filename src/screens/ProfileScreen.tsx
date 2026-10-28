@@ -1,16 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logout } from '../features/auth/authSlice';
-import { selectCartCount, selectCartTotal } from '../features/cart/cartSlice';
+import { useAuthStore } from '../features/auth/useAuthStore';
+import { useCartStore, selectCartCount, useCartTotal } from '../features/cart/useCartStore';
+import { useFavoritesStore } from '../features/favorites/useFavoritesStore';
 
 export default function ProfileScreen() {
-  const dispatch = useAppDispatch();
-  const user = useAppSelector(state => state.auth.user);
-  const cartCount = useAppSelector(selectCartCount);
-  const cartTotal = useAppSelector(selectCartTotal);
-  const favoriteIds = useAppSelector(state => state.favorites.favoriteIds);
+  const user = useAuthStore(state => state.user);
+  const logout = useAuthStore(state => state.logout);
+  const cartCount = useCartStore(selectCartCount);
+  const cartTotal = useCartTotal();
+  const favoriteIds = useFavoritesStore(state => state.favoriteIds);
 
   return (
     <View style={styles.container}>
@@ -37,7 +37,7 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <PrimaryButton title="Log Out" onPress={() => dispatch(logout())} variant="danger" style={styles.logout} />
+      <PrimaryButton title="Log Out" onPress={() => logout()} variant="danger" style={styles.logout} />
     </View>
   );
 }

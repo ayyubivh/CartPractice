@@ -1,9 +1,8 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { toggledFavorites } from '../features/favorites/favoritesSlice';
-import { addToCart } from '../features/cart/cartSlice';
+import { useFavoritesStore } from '../features/favorites/useFavoritesStore';
+import { useCartStore } from '../features/cart/useCartStore';
 
 
 interface Props {
@@ -12,14 +11,11 @@ interface Props {
 }
 
 // Reused by HomeScreen and WishlistScreen. Note this card reaches directly
-// into CartContext + FavoritesContext via hooks rather than receiving
-// callbacks as props — with Redux this becomes useSelector/useDispatch
-// calls in exactly the same spot.
+// into the cart and favorites stores rather than receiving callbacks as props.
 export default function ProductCard({ product, onPress }: Props) {
-
-
-  const dispatch = useAppDispatch();
-  const favorite = useAppSelector(state => state.favorites.favoriteIds.includes(product.id))
+  const toggleFavorite = useFavoritesStore(state => state.toggleFavorite);
+  const addToCart = useCartStore(state => state.addToCart);
+  const favorite = useFavoritesStore(state => state.favoriteIds.includes(product.id));
 
   return (
     <Pressable style={styles.card} onPress={onPress}>
@@ -36,13 +32,11 @@ export default function ProductCard({ product, onPress }: Props) {
       <View style={styles.actions}>
         <Pressable
           hitSlop={8}
-          onPress={() => dispatch(toggledFavorites(product.id))}
+          onPress={() => toggleFavorite(product.id)}
           style={styles.favoriteButton}>
           <Text style={styles.favoriteIcon}>{favorite ? '❤️' : '🤍'}</Text>
         </Pressable>
-        <Pressable hitSlop={8} onPress={() => dispatch(addToCart({
-          productId: product.id
-        }))} style={styles.addButton}>
+        <Pressable hitSlop={8} onPress={() => addToCart(product.id)} style={styles.addButton}>
           <Text style={styles.addButtonText}>Add</Text>
         </Pressable>
       </View>

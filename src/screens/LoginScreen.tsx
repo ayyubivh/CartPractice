@@ -10,22 +10,17 @@ import {
   View,
 } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import {
-  clearAuthError,
-  loginUser,
-  selectAuthError,
-  selectAuthStatus,
-  signupUser,
-} from '../features/auth/authSlice';
+import { useAuthStore } from '../features/auth/useAuthStore';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD = 6;
 
 export default function LoginScreen() {
-  const dispatch = useAppDispatch();
-  const status = useAppSelector(selectAuthStatus);
-  const error = useAppSelector(selectAuthError);
+  const status = useAuthStore(state => state.status);
+  const error = useAuthStore(state => state.error);
+  const login = useAuthStore(state => state.login);
+  const signup = useAuthStore(state => state.signup);
+  const clearAuthError = useAuthStore(state => state.clearAuthError);
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
@@ -43,15 +38,15 @@ export default function LoginScreen() {
 
   const submit = () => {
     const credentials = { email: email.trim(), password };
-    dispatch(
-      isRegister
-        ? signupUser({ ...credentials, name: name.trim() })
-        : loginUser(credentials),
-    );
+    if (isRegister) {
+      signup({ ...credentials, name: name.trim() });
+    } else {
+      login(credentials);
+    }
   };
 
   const toggleMode = () => {
-    dispatch(clearAuthError());
+    clearAuthError();
     setMode(isRegister ? 'login' : 'register');
   };
 

@@ -4,21 +4,21 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import PrimaryButton from '../components/PrimaryButton';
 import QuantityStepper from '../components/QuantityStepper';
 import { RootStackParamList } from '../types';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addToCart } from '../features/cart/cartSlice';
-import { toggledFavorites } from '../features/favorites/favoritesSlice';
-import { selectProductById } from '../features/products/productsSlice';
+import { useCartStore } from '../features/cart/useCartStore';
+import { useFavoritesStore } from '../features/favorites/useFavoritesStore';
+import { useProductsStore, selectProductById } from '../features/products/useProductsStore';
 
 export default function ProductDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'ProductDetail'>>();
-  const product = useAppSelector(selectProductById(route.params.productId));
+  const product = useProductsStore(selectProductById(route.params.productId));
 
   const [quantity, setQuantity] = useState(1);
 
-  const dispatch = useAppDispatch();
+  const addToCart = useCartStore(state => state.addToCart);
+  const toggleFavorite = useFavoritesStore(state => state.toggleFavorite);
 
-  const favorite = useAppSelector(state =>
-    product ? state.favorites.favoriteIds.includes(product.id) : false
+  const favorite = useFavoritesStore(state =>
+    product ? state.favoriteIds.includes(product.id) : false
   );
 
   if (!product) {
@@ -51,12 +51,12 @@ export default function ProductDetailScreen() {
 
       <PrimaryButton
         title={`Add to Cart · $${(product.price * quantity).toFixed(2)}`}
-        onPress={() => dispatch(addToCart({productId: product.id, quantity: quantity}))}
+        onPress={() => addToCart(product.id, quantity)}
         style={styles.addButton}
       />
       <PrimaryButton
         title={favorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
-        onPress={() => dispatch(toggledFavorites(product.id))}
+        onPress={() => toggleFavorite(product.id)}
         variant="secondary"
       />
     </ScrollView>
